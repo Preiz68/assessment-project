@@ -306,12 +306,12 @@ export default function AddProductPage() {
   };
 
   return (
-    <div className="flex bg-white min-h-screen font-sans">
+    <div className="flex bg-white w-full min-h-screen font-sans">
       <div className="hidden lg:block">
         <Sidebar />
       </div>
 
-      <main className="flex-1 lg:ml-64 p-4 lg:p-8">
+      <main className="flex-1 lg:ml-64 p-4 lg:p-8 bg-white">
         <header className="mb-6">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
