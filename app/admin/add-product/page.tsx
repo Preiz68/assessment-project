@@ -526,7 +526,6 @@ export default function AddProductPage() {
               <div className="p-5 space-y-2">
                 <label className="text-[10px] font-bold text-gray-900">
                   Material and Care
-                  <span className="text-red-500 ml-0.5">*</span>
                 </label>
                 {showMaterialTextarea ? (
                   <div className="space-y-2">
@@ -569,7 +568,7 @@ export default function AddProductPage() {
                   <div className="space-y-1.5 flex-2">
                     <label className="text-xs font-bold text-gray-900">
                       Product weight
-                      <span className="text-red-500 ml-0.5">*</span>
+      
                     </label>
                     <div className="flex gap-2">
                       <input
@@ -591,7 +590,7 @@ export default function AddProductPage() {
                   <div className="space-y-1.5 flex-1">
                     <label className="text-sm flex-nowrap font-bold text-gray-900">
                       Stock Quantity
-                      <span className="text-red-500 ml-0.5">*</span>
+      
                     </label>
                     <input
                       type="number"
@@ -1072,7 +1071,6 @@ export default function AddProductPage() {
               <div className="p-5 border border-[#EAEAEA] rounded-lg space-y-2">
                 <label className="text-[10px] font-bold text-gray-900">
                   Material and Care
-                  <span className="text-red-500 ml-0.5">*</span>
                 </label>
                 {showMaterialTextarea ? (
                   <div className="space-y-2">
@@ -1113,7 +1111,6 @@ export default function AddProductPage() {
                   <div className="col-span-8 space-y-1.5">
                     <label className="text-[10px] font-bold text-gray-900">
                       Product weight
-                      <span className="text-red-500 ml-0.5">*</span>
                     </label>
                     <div className="flex gap-1">
                       <input
@@ -1142,7 +1139,7 @@ export default function AddProductPage() {
             </div>
             <div className="col-span-4 border border-[#EAEAEA] rounded-lg flex justify-between items-center p-3">
               <label className="text-[10px] font-bold text-gray-900">
-                Stock Quantity<span className="text-red-500 ml-0.5">*</span>
+                Stock Quantity
               </label>
               <input
                 type="number"
