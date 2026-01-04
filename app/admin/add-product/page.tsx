@@ -430,7 +430,6 @@ export default function AddProductPage() {
                   placeholder="Brand name"
                   {...register("brand")}
                   error={errors.brand?.message}
-                  required
                   className="text-xs lg:text-sm"
                 />
                 <Select
@@ -590,7 +589,7 @@ export default function AddProductPage() {
                     </div>
                   </div>
                   <div className="space-y-1.5 flex-1">
-                    <label className="text-xs font-bold text-gray-900">
+                    <label className="text-sm flex-nowrap font-bold text-gray-900">
                       Stock Quantity
                       <span className="text-red-500 ml-0.5">*</span>
                     </label>

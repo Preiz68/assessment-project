@@ -12,9 +12,10 @@ export const productSchema = z.object({
   offerPercentage: z
     .number()
     .min(0)
-    .max(100, "Offer percentage must be between 0 and 100"),
-  sellingPrice: z.number().min(1, "Selling price is required"),
-  brand: z.string().min(1, "Brand is required"),
+    .max(100, "Offer percentage must be between 0 and 100")
+    .optional(),
+  sellingPrice: z.number().min(1, "Selling price is required").optional(),
+  brand: z.string().min(1, "Brand is required").optional(),
   warranty: z.string().min(1, "Warranty is required"),
   sellerName: z.string().min(1, "Seller name is required"),
   tags: z.array(z.string()).optional(),
