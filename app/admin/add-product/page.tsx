@@ -226,6 +226,16 @@ export default function AddProductPage() {
       values: string[];
     }[]
   >([{ id: Date.now().toString(), name: "", values: [] }]);
+  const [isMobile, setIsMobile] = useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
@@ -420,97 +430,99 @@ export default function AddProductPage() {
             </div>
 
             {/* Box 2: Product Organization (Integrated for Mobile flow) */}
-            <div className="md:hidden block p-5 lg:p-6 space-y-4 border border-[#EAEAEA] rounded-lg mb-6">
-              <h2 className="text-xs lg:text-sm font-bold text-gray-900">
-                Product Organization
-              </h2>
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:space-y-6">
-                <Input
-                  label="Brand Manufacturer"
-                  placeholder="Brand name"
-                  {...register("brand")}
-                  error={errors.brand?.message}
-                  className="text-xs lg:text-sm"
-                />
-                <Select
-                  label="Add Warranty"
-                  options={WARRANTY_OPTIONS}
-                  {...register("warranty")}
-                  error={errors.warranty?.message}
-                  required
-                  placeholder="Time period"
-                  className="h-10 lg:h-11 text-xs lg:text-sm"
-                />
-              </div>
-              <Input
-                label="Seller Name"
-                {...register("sellerName")}
-                defaultValue="Sagar Sports Club"
-                readOnly
-                className="text-[#1a1a1a] font-medium bg-[#F8F9FA] border-none h-10 lg:h-11 text-xs lg:text-sm"
-              />
-              <div className="space-y-1.5">
-                <label className="text-[10px] lg:text-sm font-bold text-gray-900">
-                  Tags
-                </label>
-                <div className="w-full relative h-10 lg:h-11 bg-[#F8F9FA] rounded-md px-4 flex items-center">
-                  <input
-                    value={currentTag}
-                    onFocus={() => setActiveField("tags")}
-                    onBlur={() => setActiveField(null)}
-                    onChange={(e) => {
-                      setCurrentTag(e.target.value);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && currentTag.trim() !== "") {
-                        e.preventDefault();
-                        if (!tags.includes(currentTag.trim())) {
-                          setTags((prev) => [...prev, currentTag.trim()]);
-                        }
-                        setCurrentTag("");
-                      }
-                    }}
-                    className="bg-transparent border-none text-[10px] lg:text-sm placeholder:text-gray-400 focus:outline-none w-full"
-                    placeholder="Tags"
+            {isMobile && (
+              <div className="p-5 lg:p-6 space-y-4 border border-[#EAEAEA] rounded-lg mb-6">
+                <h2 className="text-xs lg:text-sm font-bold text-gray-900">
+                  Product Organization
+                </h2>
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:space-y-6">
+                  <Input
+                    label="Brand Manufacturer"
+                    placeholder="Brand name"
+                    {...register("brand")}
+                    error={errors.brand?.message}
+                    className="text-xs lg:text-sm"
                   />
-                  {currentTag && (
-                    <div
-                      className="bg-gray-300 absolute -bottom-full left-0 right-0 h-full rounded-sm px-2 flex items-center cursor-pointer z-10"
-                      onClick={() => {
-                        if (!tags.includes(currentTag.trim())) {
-                          setTags((prev) => [...prev, currentTag.trim()]);
-                        }
-                        setCurrentTag("");
+                  <Select
+                    label="Add Warranty"
+                    options={WARRANTY_OPTIONS}
+                    {...register("warranty")}
+                    error={errors.warranty?.message}
+                    required
+                    placeholder="Time period"
+                    className="h-10 lg:h-11 text-xs lg:text-sm"
+                  />
+                </div>
+                <Input
+                  label="Seller Name"
+                  {...register("sellerName")}
+                  defaultValue="Sagar Sports Club"
+                  readOnly
+                  className="text-[#1a1a1a] font-medium bg-[#F8F9FA] border-none h-10 lg:h-11 text-xs lg:text-sm"
+                />
+                <div className="space-y-1.5">
+                  <label className="text-[10px] lg:text-sm font-bold text-gray-900">
+                    Tags
+                  </label>
+                  <div className="w-full relative h-10 lg:h-11 bg-[#F8F9FA] rounded-md px-4 flex items-center">
+                    <input
+                      value={currentTag}
+                      onFocus={() => setActiveField("tags")}
+                      onBlur={() => setActiveField(null)}
+                      onChange={(e) => {
+                        setCurrentTag(e.target.value);
                       }}
-                    >
-                      <PlusCircle className="w-4 h-4 mr-2" />
-                      {`Add ${currentTag}`}
-                    </div>
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && currentTag.trim() !== "") {
+                          e.preventDefault();
+                          if (!tags.includes(currentTag.trim())) {
+                            setTags((prev) => [...prev, currentTag.trim()]);
+                          }
+                          setCurrentTag("");
+                        }
+                      }}
+                      className="bg-transparent border-none text-[10px] lg:text-sm placeholder:text-gray-400 focus:outline-none w-full"
+                      placeholder="Tags"
+                    />
+                    {currentTag && (
+                      <div
+                        className="bg-gray-300 absolute -bottom-full left-0 right-0 h-full rounded-sm px-2 flex items-center cursor-pointer z-10"
+                        onClick={() => {
+                          if (!tags.includes(currentTag.trim())) {
+                            setTags((prev) => [...prev, currentTag.trim()]);
+                          }
+                          setCurrentTag("");
+                        }}
+                      >
+                        <PlusCircle className="w-4 h-4 mr-2" />
+                        {`Add ${currentTag}`}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="bg-red-200 flex justify-between items-center w-fit gap-2 h-5 text-sm px-1 rounded"
+                      >
+                        {tag}
+                        <XCircle
+                          className="size-2 cursor-pointer"
+                          onClick={() =>
+                            setTags(tags.filter((_, i) => i !== index))
+                          }
+                        />
+                      </span>
+                    ))}
+                  </div>
+                  {errors.tags && (
+                    <p className="text-xs text-red-500 mt-1 font-medium italic">
+                      {errors.tags.message}
+                    </p>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-red-200 flex justify-between items-center w-fit gap-2 h-5 text-sm px-1 rounded"
-                    >
-                      {tag}
-                      <XCircle
-                        className="size-2 cursor-pointer"
-                        onClick={() =>
-                          setTags(tags.filter((_, i) => i !== index))
-                        }
-                      />
-                    </span>
-                  ))}
-                </div>
-                {errors.tags && (
-                  <p className="text-xs text-red-500 mt-1 font-medium italic">
-                    {errors.tags.message}
-                  </p>
-                )}
               </div>
-            </div>
+            )}
 
             {/* Box 3: Pricing */}
             <div className="p-5 lg:p-6 border border-[#EAEAEA] rounded-lg">
@@ -522,91 +534,91 @@ export default function AddProductPage() {
             </div>
 
             {/* Box 4: Material & Logistics (Integrated for Mobile flow) */}
-            <div className="md:hidden block space-y-6">
-              <div className="p-5 space-y-2">
-                <label className="text-[10px] font-bold text-gray-900">
-                  Material and Care
-                </label>
-                {showMaterialTextarea ? (
-                  <div className="space-y-2">
-                    <Textarea
-                      label="Custom Material & Care"
-                      {...register("materialAndCare")}
-                      placeholder="Enter product materials and care instructions (e.g., 100% cotton, machine wash cold)"
-                      className="h-24 text-[10px]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMaterialTextarea(false);
-                        setValue("materialAndCare", "");
+            {isMobile && (
+              <div className="space-y-6">
+                <div className="p-5 space-y-2">
+                  <label className="text-[10px] font-bold text-gray-900">
+                    Material and Care
+                  </label>
+                  {showMaterialTextarea ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        label="Custom Material & Care"
+                        {...register("materialAndCare")}
+                        placeholder="Enter product materials and care instructions (e.g., 100% cotton, machine wash cold)"
+                        className="h-24 text-[10px]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowMaterialTextarea(false);
+                          setValue("materialAndCare", "");
+                        }}
+                        className="text-[10px] text-[#A1001A] font-bold"
+                      >
+                        Reset to options
+                      </button>
+                    </div>
+                  ) : (
+                    <Select
+                      options={MATERIAL_OPTIONS}
+                      value={form.watch("materialAndCare")}
+                      onChange={(e) => {
+                        if (e.target.value === "Other") {
+                          setShowMaterialTextarea(true);
+                          setValue("materialAndCare", "");
+                        } else {
+                          setValue("materialAndCare", e.target.value);
+                        }
                       }}
-                      className="text-[10px] text-[#A1001A] font-bold"
-                    >
-                      Reset to options
-                    </button>
-                  </div>
-                ) : (
-                  <Select
-                    options={MATERIAL_OPTIONS}
-                    value={form.watch("materialAndCare")}
-                    onChange={(e) => {
-                      if (e.target.value === "Other") {
-                        setShowMaterialTextarea(true);
-                        setValue("materialAndCare", "");
-                      } else {
-                        setValue("materialAndCare", e.target.value);
-                      }
-                    }}
-                    className="h-12 bg-[#F8F9FA] border-none text-xs font-medium"
-                  />
-                )}
-              </div>
+                      className="h-12 bg-[#F8F9FA] border-none text-xs font-medium"
+                    />
+                  )}
+                </div>
 
-              <div className="p-5">
-                <div className="flex gap-4 w-full items-start">
-                  <div className="space-y-1.5 flex-2">
-                    <label className="text-xs font-bold text-gray-900">
-                      Product weight
-      
-                    </label>
-                    <div className="flex gap-2">
+                <div className="p-5">
+                  <div className="flex gap-4 w-full items-start">
+                    <div className="space-y-1.5 flex-2">
+                      <label className="text-xs font-bold text-gray-900">
+                        Product weight
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          step="0.1"
+                          {...register("weight", { valueAsNumber: true })}
+                          placeholder="0.7"
+                          className="flex-1 h-10 bg-[#F8F9FA] rounded-lg px-3 text-xs font-medium border border-[#EAEAEA] focus:outline-none"
+                        />
+                        <select
+                          {...register("weightUnit")}
+                          className="w-16 bg-[#F8F9FA] border border-[#EAEAEA] rounded-lg px-1 text-xs font-bold focus:outline-none text-[#1a1a1a]"
+                        >
+                          <option value="Kg">Kg</option>
+                          <option value="G">G</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className="space-y-1.5 flex-1">
+                      <label className="text-sm flex-nowrap font-bold text-gray-900">
+                        Stock Quantity
+                      </label>
                       <input
                         type="number"
-                        step="0.1"
-                        {...register("weight", { valueAsNumber: true })}
-                        placeholder="0.7"
-                        className="flex-1 h-10 bg-[#F8F9FA] rounded-lg px-3 text-xs font-medium border border-[#EAEAEA] focus:outline-none"
+                        {...register("stockQuantity", { valueAsNumber: true })}
+                        placeholder="100"
+                        className="w-full h-10 bg-[#F8F9FA] border border-[#EAEAEA] rounded-lg px-3 text-xs font-medium focus:outline-none text-left placeholder:text-gray-300"
                       />
-                      <select
-                        {...register("weightUnit")}
-                        className="w-16 bg-[#F8F9FA] border border-[#EAEAEA] rounded-lg px-1 text-xs font-bold focus:outline-none text-[#1a1a1a]"
-                      >
-                        <option value="Kg">Kg</option>
-                        <option value="G">G</option>
-                      </select>
+                      {errors.stockQuantity && (
+                        <p className="text-xs text-red-500 mt-1">
+                          {errors.stockQuantity.message}
+                        </p>
+                      )}
                     </div>
-                  </div>
-                  <div className="space-y-1.5 flex-1">
-                    <label className="text-sm flex-nowrap font-bold text-gray-900">
-                      Stock Quantity
-      
-                    </label>
-                    <input
-                      type="number"
-                      {...register("stockQuantity", { valueAsNumber: true })}
-                      placeholder="100"
-                      className="w-full h-10 bg-[#F8F9FA] border border-[#EAEAEA] rounded-lg px-3 text-xs font-medium focus:outline-none text-left placeholder:text-gray-300"
-                    />
-                    {errors.stockQuantity && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {errors.stockQuantity.message}
-                      </p>
-                    )}
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Box 5: Variants */}
             <div className="p-5 lg:p-6 space-y-4 border border-[#EAEAEA] rounded-lg">
@@ -974,186 +986,188 @@ export default function AddProductPage() {
               ) : null}
             </div>
           </div>
-          <div className="hidden md:block col-span-4 space-y-3">
-            <div className="p-5 lg:p-6 shadow-sm border border-[#EAEAEA] rounded-lg space-y-4">
-              <h2 className="text-xs lg:text-sm font-bold text-gray-900">
-                Product Organization
-              </h2>
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:space-y-6">
-                <Input
-                  label="Brand Manufacturer"
-                  placeholder="Brand name"
-                  {...register("brand")}
-                  error={errors.brand?.message}
-                  required
-                  className="text-xs lg:text-sm"
-                />
-                <Select
-                  label="Add Warranty"
-                  options={WARRANTY_OPTIONS}
-                  {...register("warranty")}
-                  error={errors.warranty?.message}
-                  required
-                  placeholder="Time period"
-                  className="h-10 lg:h-11 text-xs lg:text-sm"
-                />
-              </div>
-              <Input
-                label="Seller Name"
-                {...register("sellerName")}
-                defaultValue="Sagar Sports Club"
-                readOnly
-                className="bg-[#F8F9FA] border-none text-[#1a1a1a] font-medium h-10 lg:h-11 text-xs lg:text-sm"
-              />
-              <div className="space-y-1.5">
-                <label className="text-[10px] lg:text-sm font-bold text-gray-900">
-                  Tags
-                </label>
-                <div className="w-full relative h-10 lg:h-11 bg-[#F8F9FA] rounded-md px-4 flex items-center">
-                  <input
-                    value={currentTag}
-                    onFocus={() => setActiveField("tags")}
-                    onBlur={() => setActiveField(null)}
-                    onChange={(e) => {
-                      setCurrentTag(e.target.value);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && currentTag.trim() !== "") {
-                        e.preventDefault();
-                        if (!tags.includes(currentTag.trim())) {
-                          setTags((prev) => [...prev, currentTag.trim()]);
-                        }
-                        setCurrentTag("");
-                      }
-                    }}
-                    className="bg-transparent border-none text-[10px] lg:text-sm placeholder:text-gray-400 focus:outline-none w-full"
-                    placeholder="Tags"
+          {!isMobile && (
+            <div className="col-span-4 space-y-3">
+              <div className="p-5 lg:p-6 shadow-sm border border-[#EAEAEA] rounded-lg space-y-4">
+                <h2 className="text-xs lg:text-sm font-bold text-gray-900">
+                  Product Organization
+                </h2>
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:space-y-6">
+                  <Input
+                    label="Brand Manufacturer"
+                    placeholder="Brand name"
+                    {...register("brand")}
+                    error={errors.brand?.message}
+                    required
+                    className="text-xs lg:text-sm"
                   />
-                  {currentTag && (
-                    <div
-                      className="bg-gray-300 absolute -bottom-full left-0 right-0 h-full rounded-sm px-2 flex items-center cursor-pointer z-10"
-                      onClick={() => {
-                        if (!tags.includes(currentTag.trim())) {
-                          setTags((prev) => [...prev, currentTag.trim()]);
-                        }
-                        setCurrentTag("");
+                  <Select
+                    label="Add Warranty"
+                    options={WARRANTY_OPTIONS}
+                    {...register("warranty")}
+                    error={errors.warranty?.message}
+                    required
+                    placeholder="Time period"
+                    className="h-10 lg:h-11 text-xs lg:text-sm"
+                  />
+                </div>
+                <Input
+                  label="Seller Name"
+                  {...register("sellerName")}
+                  defaultValue="Sagar Sports Club"
+                  readOnly
+                  className="bg-[#F8F9FA] border-none text-[#1a1a1a] font-medium h-10 lg:h-11 text-xs lg:text-sm"
+                />
+                <div className="space-y-1.5">
+                  <label className="text-[10px] lg:text-sm font-bold text-gray-900">
+                    Tags
+                  </label>
+                  <div className="w-full relative h-10 lg:h-11 bg-[#F8F9FA] rounded-md px-4 flex items-center">
+                    <input
+                      value={currentTag}
+                      onFocus={() => setActiveField("tags")}
+                      onBlur={() => setActiveField(null)}
+                      onChange={(e) => {
+                        setCurrentTag(e.target.value);
                       }}
-                    >
-                      <PlusCircle className="w-4 h-4 mr-2" />
-                      {`Add ${currentTag}`}
-                    </div>
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && currentTag.trim() !== "") {
+                          e.preventDefault();
+                          if (!tags.includes(currentTag.trim())) {
+                            setTags((prev) => [...prev, currentTag.trim()]);
+                          }
+                          setCurrentTag("");
+                        }
+                      }}
+                      className="bg-transparent border-none text-[10px] lg:text-sm placeholder:text-gray-400 focus:outline-none w-full"
+                      placeholder="Tags"
+                    />
+                    {currentTag && (
+                      <div
+                        className="bg-gray-300 absolute -bottom-full left-0 right-0 h-full rounded-sm px-2 flex items-center cursor-pointer z-10"
+                        onClick={() => {
+                          if (!tags.includes(currentTag.trim())) {
+                            setTags((prev) => [...prev, currentTag.trim()]);
+                          }
+                          setCurrentTag("");
+                        }}
+                      >
+                        <PlusCircle className="w-4 h-4 mr-2" />
+                        {`Add ${currentTag}`}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((tag, index) => (
+                      <span
+                        key={index}
+                        className="bg-red-200 flex justify-between items-center w-fit gap-2 h-5 text-sm px-1 rounded"
+                      >
+                        {tag}
+                        <XCircle
+                          className="size-2 cursor-pointer"
+                          onClick={() =>
+                            setTags(tags.filter((_, i) => i !== index))
+                          }
+                        />
+                      </span>
+                    ))}
+                  </div>
+                  {errors.tags && (
+                    <p className="text-xs text-red-500 mt-1 font-medium italic">
+                      {errors.tags.message}
+                    </p>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="bg-red-200 flex justify-between items-center w-fit gap-2 h-5 text-sm px-1 rounded"
-                    >
-                      {tag}
-                      <XCircle
-                        className="size-2 cursor-pointer"
-                        onClick={() =>
-                          setTags(tags.filter((_, i) => i !== index))
-                        }
+              </div>
+              <div className="space-y-6">
+                <div className="p-5 border border-[#EAEAEA] rounded-lg space-y-2">
+                  <label className="text-[10px] font-bold text-gray-900">
+                    Material and Care
+                  </label>
+                  {showMaterialTextarea ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        label="Custom Material & Care"
+                        {...register("materialAndCare")}
+                        className="h-24 text-[10px]"
                       />
-                    </span>
-                  ))}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowMaterialTextarea(false);
+                          setValue("materialAndCare", "");
+                        }}
+                        className="text-[10px] text-[#273C8A] font-bold"
+                      >
+                        Reset to options
+                      </button>
+                    </div>
+                  ) : (
+                    <Select
+                      options={MATERIAL_OPTIONS}
+                      value={form.watch("materialAndCare")}
+                      onChange={(e) => {
+                        if (e.target.value === "Other") {
+                          setShowMaterialTextarea(true);
+                          setValue("materialAndCare", "");
+                        } else {
+                          setValue("materialAndCare", e.target.value);
+                        }
+                      }}
+                      placeholder="Enter product materials and care instructions (e.g., 100% cotton, machine wash cold)"
+                      className="h-12 bg-[#F8F9FA] border border-[#EAEAEA] rounded-lg text-[10px] font-medium"
+                      error={errors.materialAndCare?.message}
+                    />
+                  )}
+                  <div className="grid grid-cols-12 gap-3">
+                    <div className="col-span-8 space-y-1.5">
+                      <label className="text-[10px] font-bold text-gray-900">
+                        Product weight
+                      </label>
+                      <div className="flex gap-1">
+                        <input
+                          type="number"
+                          step="0.001"
+                          {...register("weight", { valueAsNumber: true })}
+                          placeholder="0.0"
+                          className="w-[60%] h-10 bg-white border border-[#EAEAEA] rounded-lg px-3 text-[10px] font-medium focus:outline-none"
+                        />
+                        <select
+                          {...register("weightUnit")}
+                          className="flex-1 bg-white border border-[#EAEAEA] rounded-lg px-2 text-[10px] font-bold focus:outline-none text-[#1a1a1a]"
+                        >
+                          <option value="Kg">Kg</option>
+                          <option value="G">G</option>
+                        </select>
+                      </div>
+                      {errors.weight && (
+                        <p className="text-xs text-red-500 mt-1 font-medium">
+                          {errors.weight.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                {errors.tags && (
-                  <p className="text-xs text-red-500 mt-1 font-medium italic">
-                    {errors.tags.message}
+              </div>
+              <div className="col-span-4 border border-[#EAEAEA] rounded-lg flex justify-between items-center p-3">
+                <label className="text-[10px] font-bold text-gray-900">
+                  Stock Quantity
+                </label>
+                <input
+                  type="number"
+                  {...register("stockQuantity", { valueAsNumber: true })}
+                  placeholder="100"
+                  className="p-2 bg-white border border-[#EAEAEA] rounded-lg text-[10px] font-medium focus:outline-none"
+                />
+                {errors.stockQuantity && (
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.stockQuantity.message}
                   </p>
                 )}
               </div>
             </div>
-            <div className="space-y-6">
-              <div className="p-5 border border-[#EAEAEA] rounded-lg space-y-2">
-                <label className="text-[10px] font-bold text-gray-900">
-                  Material and Care
-                </label>
-                {showMaterialTextarea ? (
-                  <div className="space-y-2">
-                    <Textarea
-                      label="Custom Material & Care"
-                      {...register("materialAndCare")}
-                      className="h-24 text-[10px]"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowMaterialTextarea(false);
-                        setValue("materialAndCare", "");
-                      }}
-                      className="text-[10px] text-[#273C8A] font-bold"
-                    >
-                      Reset to options
-                    </button>
-                  </div>
-                ) : (
-                  <Select
-                    options={MATERIAL_OPTIONS}
-                    value={form.watch("materialAndCare")}
-                    onChange={(e) => {
-                      if (e.target.value === "Other") {
-                        setShowMaterialTextarea(true);
-                        setValue("materialAndCare", "");
-                      } else {
-                        setValue("materialAndCare", e.target.value);
-                      }
-                    }}
-                    placeholder="Enter product materials and care instructions (e.g., 100% cotton, machine wash cold)"
-                    className="h-12 bg-[#F8F9FA] border border-[#EAEAEA] rounded-lg text-[10px] font-medium"
-                    error={errors.materialAndCare?.message}
-                  />
-                )}
-                <div className="grid grid-cols-12 gap-3">
-                  <div className="col-span-8 space-y-1.5">
-                    <label className="text-[10px] font-bold text-gray-900">
-                      Product weight
-                    </label>
-                    <div className="flex gap-1">
-                      <input
-                        type="number"
-                        step="0.001"
-                        {...register("weight", { valueAsNumber: true })}
-                        placeholder="0.0"
-                        className="w-[60%] h-10 bg-white border border-[#EAEAEA] rounded-lg px-3 text-[10px] font-medium focus:outline-none"
-                      />
-                      <select
-                        {...register("weightUnit")}
-                        className="flex-1 bg-white border border-[#EAEAEA] rounded-lg px-2 text-[10px] font-bold focus:outline-none text-[#1a1a1a]"
-                      >
-                        <option value="Kg">Kg</option>
-                        <option value="G">G</option>
-                      </select>
-                    </div>
-                    {errors.weight && (
-                      <p className="text-xs text-red-500 mt-1 font-medium">
-                        {errors.weight.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-span-4 border border-[#EAEAEA] rounded-lg flex justify-between items-center p-3">
-              <label className="text-[10px] font-bold text-gray-900">
-                Stock Quantity
-              </label>
-              <input
-                type="number"
-                {...register("stockQuantity", { valueAsNumber: true })}
-                placeholder="100"
-                className="p-2 bg-white border border-[#EAEAEA] rounded-lg text-[10px] font-medium focus:outline-none"
-              />
-              {errors.stockQuantity && (
-                <p className="text-xs text-red-500 mt-1">
-                  {errors.stockQuantity.message}
-                </p>
-              )}
-            </div>
-          </div>
+          )}
         </form>
       </main>
     </div>
